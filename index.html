@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>放課後ハートビート – リョウスケ編</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{height:100%;background:#2b1b2a;overflow:hidden;touch-action:manipulation}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;overflow:hidden;background:#000;transform-origin:center;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;color:#5a3340}
+#bg{position:absolute;inset:0;background-size:cover;background-position:center}
+#sp{position:absolute;bottom:0;left:50%;height:640px;transform:translateX(-50%);transition:left .5s,opacity .25s}
+#sp.tl{left:76%}
+#sp.hop{animation:hop .28s ease-out}
+@keyframes hop{0%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-14px)}100%{transform:translateX(-50%) translateY(0)}}
+/* 吹き出し: Hukidasi.png(676x369)を幅1280pxに拡大。文字位置は元画像の座標から%で算出 */
+#bub{position:absolute;left:0;bottom:0;width:1280px;height:699px;pointer-events:none;display:none}
+#bi{width:100%;height:100%;display:block}
+#nm{position:absolute;left:17.5%;top:51%;width:21.3%;height:8.5%;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:700;color:#8a3f56;white-space:nowrap;overflow:hidden}
+#tx{position:absolute;left:20.7%;top:66.8%;width:59%;height:23.3%;font-size:28px;font-weight:500;line-height:1.5;color:#5a3340;overflow:hidden}
+#nx{position:absolute;left:76%;top:86%;font-size:22px;color:#e07c96;opacity:0;animation:bl 1s infinite}
+@keyframes bl{50%{transform:translateY(5px)}}
+.nb #bi{display:none}
+.nb::before{content:"";position:absolute;left:14%;top:47%;width:72%;height:51%;border-radius:36px;background:linear-gradient(135deg,#fde4ea,#fff3d6);border:4px solid #d9a96b}
+.nb #nm{background:#f7b6c4;border-radius:14px}
+#hud{position:absolute;top:18px;left:0;right:0;display:none;pointer-events:none;z-index:4}
+#lab{position:absolute;left:24px;top:0;padding:8px 20px;border-radius:999px;background:rgba(255,247,248,.9);border:2px solid #d9a96b;font-weight:700;font-size:20px}
+#lvw{position:absolute;right:24px;top:0;display:flex;align-items:center;gap:10px;padding:8px 18px;border-radius:999px;background:rgba(255,247,248,.9);border:2px solid #d9a96b;font-size:22px;font-weight:700;color:#e0577a}
+#bar{width:170px;height:16px;border-radius:8px;background:#f3d4dc;overflow:hidden}
+#fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#f7a8b8,#e0577a);transition:width .5s}
+#pop{position:absolute;right:30px;top:86px;font-size:30px;font-weight:700;opacity:0;z-index:6;text-shadow:0 2px 6px #fff}
+#pop.up{color:#e0577a;animation:pp 1.8s}
+#pop.dn{color:#6b6f9a;animation:pp 1.8s}
+@keyframes pp{0%{opacity:0;transform:translateY(12px)}15%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+#ch{position:absolute;left:260px;top:110px;width:760px;display:flex;flex-direction:column;gap:16px;z-index:5}
+.cb{font:inherit;font-size:27px;font-weight:700;color:#6b3445;padding:18px 26px;border-radius:16px;border:3px solid #d9a96b;background:rgba(255,247,248,.95);box-shadow:0 4px 14px rgba(90,40,60,.25);cursor:pointer}
+.cb:active{background:#ffe0e8}
+#ov{position:absolute;inset:0;display:none;z-index:10}
+.card{position:absolute;left:70px;top:110px;width:520px;padding:36px 40px;border-radius:28px;background:rgba(255,247,248,.93);border:4px solid #d9a96b;box-shadow:0 8px 30px rgba(90,40,60,.35);text-align:center}
+.lg{font-size:46px;font-weight:700;color:#e0577a;letter-spacing:.04em}
+.sub{margin:6px 0 26px;font-size:22px;color:#a2735a}
+.card label{display:block;font-size:20px;font-weight:700;margin-bottom:10px}
+#in{width:100%;font:inherit;font-size:26px;text-align:center;padding:12px;border-radius:14px;border:3px solid #f0b8c6;background:#fff;color:#5a3340;outline:none;user-select:text;-webkit-user-select:text}
+#er{height:28px;margin:6px 0;color:#d03a5a;font-weight:700}
+.bt{font:inherit;font-size:26px;font-weight:700;color:#fff;padding:14px 48px;border-radius:999px;border:3px solid #e9c98e;background:linear-gradient(#f7a8b8,#e0577a);cursor:pointer;box-shadow:0 4px 12px rgba(160,50,80,.35)}
+.bt:active{transform:scale(.96)}
+.mg{position:absolute;inset:0;background:rgba(60,20,40,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center}
+.mg h2{font-size:46px}.mg p{font-size:26px;line-height:1.6}
+#hd{position:absolute;top:24px;left:0;right:0;display:flex;justify-content:center;gap:60px;font-size:34px;font-weight:700}
+#fld{position:absolute;inset:0;overflow:hidden}
+.it{position:absolute;top:-80px;font-size:68px;padding:6px;animation:fall linear forwards;text-shadow:none;cursor:pointer}
+@keyframes fall{to{top:780px}}
+@keyframes got{to{transform:scale(1.7);opacity:0}}
+#barx{position:relative;width:860px;height:48px;border-radius:24px;background:rgba(255,255,255,.35);border:3px solid #fff}
+#zn{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);background:rgba(255,160,185,.9);border-radius:10px}
+#mk{position:absolute;top:-12px;width:14px;height:68px;border-radius:7px;background:#fff;transform:translateX(-50%);box-shadow:0 0 14px #fff}
+#fb{height:44px;font-size:34px;font-weight:700}
+.end{position:absolute;inset:0;background:rgba(255,236,242,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.end h2{font-size:44px;color:#e0577a}.end p{font-size:26px;line-height:1.6;max-width:820px}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="bg"></div>
+ <img id="sp" alt="">
+ <div id="bub"><img id="bi" alt=""><div id="nm"></div><div id="tx"></div><div id="nx">▼</div></div>
+ <div id="hud"><div id="lab"></div><div id="lvw">♥<div id="bar"><i id="fill"></i></div><span id="lv">0</span></div></div>
+ <div id="pop"></div>
+ <div id="ch"></div>
+ <div id="ov"></div>
+</div>
+<script>
+// ===== 設定: 画像ファイルの置き場所と拡張子(必要に応じて変更) =====
+const CFG={dir:'',ext:'.png',bgExt:'.png'};
+const SP={n:'Normal',z:'Ziman',h:'UdekumiHirameki'};   // 立ち絵: 通常 / ジト目 / 腕組み・ひらめき
+const BG={Gakkou:['#9cc8ee','#f7e8b8'],Rouka:['#ecd0a8','#9b7b5b'],Kaeri:['#f6ad82','#7a5090'],Kaerimiti:['#f08a6a','#3a2a5a']};
+const MAXLOVE=15;
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'),bg=$('bg'),sp=$('sp'),bub=$('bub'),ov=$('ov'),ch=$('ch');
+let S,mode='title',typing=null,full='';
+
+function fit(){stage.style.transform=`translate(-50%,-50%) scale(${Math.min(innerWidth/1280,innerHeight/720)})`}
+addEventListener('resize',fit);fit();
+
+$('bi').onerror=()=>bub.classList.add('nb');
+$('bi').src=CFG.dir+'Hukidasi'+CFG.ext;
+
+function setBg(n){const g=BG[n];bg.style.background=`url(${CFG.dir}${n}${CFG.bgExt}) center/cover,linear-gradient(${g[0]},${g[1]})`}
+function setSp(c){
+  if(c==='x'){sp.style.opacity=0;return}
+  sp.style.opacity=1;sp.dataset.fb='';
+  sp.onerror=()=>{if(!sp.dataset.fb){sp.dataset.fb=1;sp.src=CFG.dir+SP.n+CFG.ext}else sp.style.opacity=0};
+  const src=CFG.dir+SP[c]+CFG.ext;
+  if(!sp.src.endsWith(src)){sp.src=src;sp.classList.remove('hop');void sp.offsetWidth;sp.classList.add('hop')}
+}
+const fmt=t=>t.replace(/\{n\}/g,S.love>=8?S.name:S.name+'さん').replace(/\{m\}/g,S.name);
+
+function addLove(d){
+  if(!d)return;
+  S.love=Math.max(0,S.love+d);
+  $('lv').textContent=S.love;$('fill').style.width=Math.min(100,S.love/MAXLOVE*100)+'%';
+  const p=$('pop');p.textContent=d>0?`♥ 好感度 +${d}`:`好感度 ${d}`;
+  p.className='';void p.offsetWidth;p.className=d>0?'up':'dn';
+}
+
+// ===== 文章表示 =====
+function say(st,instant){
+  bub.style.display='block';
+  $('nm').style.visibility=st.w?'visible':'hidden';
+  $('nm').textContent=st.w==='r'?'リョウスケ':st.w==='m'?S.name:'';
+  full=fmt(st.t);$('tx').textContent='';$('nx').style.opacity=0;
+  clearInterval(typing);let k=0;
+  if(instant)return fin();
+  typing=setInterval(()=>{k++;$('tx').textContent=full.slice(0,k);if(k>=full.length)fin()},30);
+}
+function fin(){clearInterval(typing);typing=null;$('tx').textContent=full;$('nx').style.opacity=1}
+
+// ===== 進行 =====
+function jump(l){S.lab=l;S.i=0;run()}
+function next(){
+  if(typing)return fin();
+  const st=SC[S.lab][S.i];
+  if(st.go)jump(st.go);else{S.i++;run()}
+}
+function run(){
+  const st=SC[S.lab][S.i];if(!st)return;
+  if(st.bg)setBg(st.bg);
+  if(st.s)setSp(st.s);
+  if(st.lab)$('lab').textContent=st.lab;
+  if(st.l)addLove(st.l);
+  if(st.br)return jump(st.br.find(x=>S.love>=x[0])[1]);
+  if(st.end)return ending(st.end);
+  if(st.mg)return startMG(st);
+  if(st.c)return choose(st);
+  if(st.go&&!st.t)return jump(st.go);
+  mode='read';say(st);
+}
+function choose(st){
+  mode='choice';
+  if(st.t)say(st,true);
+  ch.innerHTML='';
+  st.c.forEach(o=>{
+    const b=document.createElement('button');b.className='cb';b.textContent=fmt(o.t);
+    b.onclick=()=>{ch.innerHTML='';addLove(o.l);jump(o.go)};
+    ch.appendChild(b);
+  });
+}
+stage.addEventListener('click',()=>{if(mode==='read')next()});
+document.addEventListener('keydown',e=>{if(mode==='read'&&(e.key===' '||e.key==='Enter')){e.preventDefault();next()}});
+
+// ===== ミニゲーム =====
+function startMG(st){
+  mode='mg';bub.style.display='none';ch.innerHTML='';
+  const f=st.mg==='catch'?catchGame:stepGame;
+  f(tier=>{ov.style.display='none';ov.innerHTML='';addLove(st.ml[tier]);jump(st.go+tier)});
+}
+function intro(t,d,go){
+  ov.innerHTML=`<div class="mg"><h2>${t}</h2><p>${d}</p><button class="bt" id="gs">スタート</button></div>`;
+  ov.style.display='block';$('gs').onclick=go;
+}
+// 1) プリントキャッチ: 落ちてくるものをタップ
+function catchGame(done){
+  intro('プリントをキャッチ!','舞い散るプリントをタップして拾おう<br>📄 +1 　❤ +3 　🌀 −2(ぐしゃぐしゃ紙は拾っちゃダメ)',()=>{
+    ov.innerHTML=`<div class="mg" style="background:rgba(60,20,40,.15)"><div id="hd"><span>📄 <b id="sc">0</b></span><span>⏱ <b id="tm">15</b></span></div><div id="fld"></div></div>`;
+    let sc=0,t=15;const fld=$('fld');
+    const spw=setInterval(()=>{
+      const r=Math.random(),k=r<.12?['❤',3]:r<.3?['🌀',-2]:['📄',1];
+      const d=document.createElement('div');d.className='it';d.textContent=k[0];
+      d.style.left=(40+Math.random()*1100)+'px';d.style.animationDuration=(2.2+Math.random()*1.6)+'s';
+      d.onpointerdown=()=>{sc=Math.max(0,sc+k[1]);$('sc').textContent=sc;d.style.pointerEvents='none';d.style.animation='got .22s forwards'};
+      d.onanimationend=()=>d.remove();fld.appendChild(d);
+    },420);
+    const cd=setInterval(()=>{t--;$('tm').textContent=t;
+      if(t<=0){clearInterval(cd);clearInterval(spw);done(sc>=12?2:sc>=6?1:0)}},1000);
+  });
+}
+// 2) 歩幅そろえ: マーカーが中央のゾーンに入った瞬間にタップ(3ラウンド)
+function stepGame(done){
+  intro('歩幅をそろえよう','動くマーカーがピンクのゾーンに入った瞬間に<br>「いまっ!」をタップ(全3回・だんだん難しくなるよ)',()=>{
+    ov.innerHTML=`<div class="mg"><div id="hd"><span id="rd">1 / 3</span></div><div id="barx"><div id="zn"></div><div id="mk"></div></div><div id="fb"></div><button class="bt" id="tp" style="font-size:34px;padding:18px 90px">いまっ!</button></div>`;
+    const Z=[.2,.14,.1],V=[2.4,3.2,4.2];let r=0,hit=0,cur=0,lock=false,t0=performance.now(),raf;
+    const zone=()=>{$('zn').style.width=Z[r]*100+'%';$('rd').textContent=`${r+1} / 3`};zone();
+    const loop=now=>{if(!lock){cur=(Math.sin((now-t0)/1000*V[r]-Math.PI/2)+1)/2;$('mk').style.left=cur*100+'%'}raf=requestAnimationFrame(loop)};
+    raf=requestAnimationFrame(loop);
+    $('tp').onpointerdown=()=>{
+      if(lock)return;lock=true;
+      const ok=Math.abs(cur-.5)<=Z[r]/2;if(ok)hit++;
+      $('fb').textContent=ok?'ぴったり♥':'ずれた…';
+      setTimeout(()=>{r++;
+        if(r>=3){cancelAnimationFrame(raf);done(hit)}
+        else{lock=false;t0=performance.now();$('fb').textContent='';zone()}},750);
+    };
+  });
+}
+
+// ===== タイトル / エンディング =====
+function title(){
+  mode='title';bub.style.display='none';$('hud').style.display='none';ch.innerHTML='';
+  setBg('Gakkou');setSp('n');sp.classList.add('tl');
+  let saved='';try{saved=localStorage.getItem('lovesim_name')||''}catch(e){}
+  ov.innerHTML=`<div class="card"><div class="lg">放課後ハートビート</div><div class="sub">― リョウスケ編 ―</div><label>あなたの名前を入れてね</label><input id="in" maxlength="8" placeholder="なまえ(8文字まで)"><div id="er"></div><button class="bt" id="st">はじめる</button></div>`;
+  ov.style.display='block';$('in').value=saved;
+  const go=()=>{
+    const n=$('in').value.trim();
+    if(!n){$('er').textContent='名前を入れてね';return}
+    try{localStorage.setItem('lovesim_name',n)}catch(e){}
+    S={name:n,love:0,lab:'start',i:0};
+    $('lv').textContent=0;$('fill').style.width='0';
+    ov.style.display='none';ov.innerHTML='';sp.classList.remove('tl');
+    $('hud').style.display='block';run();
+  };
+  $('st').onclick=go;$('in').onkeydown=e=>{if(e.key==='Enter')go()};
+}
+function ending(k){
+  mode='end';bub.style.display='none';ch.innerHTML='';
+  const T={A:['ハッピーエンド','リョウスケと恋人になった!'],B:['友達以上、恋人未満エンド','もう少しで、気持ちが届きそう…'],C:['クラスメイトエンド','また明日、教室で。']}[k];
+  ov.innerHTML=`<div class="end"><h2>${T[0]}</h2><p>${T[1]}</p><p>最終好感度 ♥ ${S.love} / ${MAXLOVE}</p><p style="font-size:22px">選択肢やミニゲームの結果で、エンディングが変わるよ</p><button class="bt" id="rt">もう一度あそぶ</button></div>`;
+  ov.style.display='block';$('rt').onclick=title;
+}
+
+// ===== シナリオ(w: r=リョウスケ / m=プレイヤー / なし=地の文、s: n=通常 z=ジト目 h=ひらめき x=非表示、l=好感度) =====
+const R='r',M='m';
+const SC={
+start:[
+ {bg:'Gakkou',s:'x',lab:'① 朝の教室',t:'新学期が始まって数日。朝の教室には、まだ少しだけ緊張した空気が残っている。'},
+ {t:'隣の席には、眼鏡をかけた真面目そうなクラスメイトが座っている。'},
+ {s:'n',w:R,t:'おはよう。……えっと、{n}で合ってるかな。名前を間違えたら失礼だから、ずっと確認したかったんだ。'},
+ {w:R,t:'ぼくはリョウスケ。クラス委員をやってるから、困ったことがあったら遠慮なく言ってね。'},
+ {t:'(どう返事しよう?)',c:[{t:'よろしくね、リョウスケくん!',l:2,go:'a1'},{t:'うん、合ってるよ。ありがとう',l:1,go:'a2'},{t:'……べつに困ってないけど',l:-1,go:'a3'}]}],
+a1:[{s:'n',w:R,t:'くん付けか……ちょっと照れるな。こちらこそよろしく、{n}。'},{go:'s2'}],
+a2:[{s:'n',w:R,t:'よかった。……{n}って、いい名前だね。覚えやすいし、呼びやすい。'},{go:'s2'}],
+a3:[{s:'z',w:R,t:'……そ、そっか。そんな目で見ないでよ。でも、気持ちだけ受け取っておくね。'},{go:'s2'}],
+
+s2:[
+ {bg:'Rouka',s:'x',lab:'② 休み時間の廊下',t:'休み時間。廊下を歩いていると、前方でリョウスケが大量のプリントを抱えてふらついている。'},
+ {s:'n',w:R,t:'わっ、わわっ……!'},
+ {t:'次の瞬間、プリントが空中にぶわっと舞い散った!'},
+ {mg:'catch',ml:[0,2,3],go:'s2r'}],
+s2r2:[{s:'h',w:R,t:'すごい、ほとんど拾ってくれたんだ!{n}、反射神経いいんだね。ありがとう、助かったよ。'},{w:R,t:'……そうだ、いいことを思いついた。今日の放課後、お礼をさせてくれないかな?'},{go:'s3'}],
+s2r1:[{s:'n',w:R,t:'ありがとう、{n}。半分くらいは拾えたね。おかげで授業に間に合いそうだ。'},{w:R,t:'お礼をしたいんだけど、放課後、少しだけ時間もらえるかな?'},{go:'s3'}],
+s2r0:[{s:'z',w:R,t:'……あはは、ほとんど落ちちゃったね。でも、手伝おうとしてくれたのは嬉しかったよ。'},{s:'n',w:R,t:'お詫び……じゃなくて、お礼に。放課後、少しだけ時間もらえるかな?'},{go:'s3'}],
+
+s3:[
+ {bg:'Gakkou',s:'n',lab:'③ 放課後の教室',t:'放課後。夕方の光が差し込む教室で、リョウスケが机の上を整理している。'},
+ {w:R,t:'来てくれてありがとう、{n}。実は……ぼくがクラス委員になったのには、ちょっと理由があるんだ。'},
+ {t:'(リョウスケが何か話したそうにしている)',c:[{t:'聞かせて。気になる!',l:2,go:'b1'},{t:'それより、お礼って何してくれるの?',l:1,go:'b2'},{t:'長くなるなら、また今度にして',l:-1,go:'b3'}]}],
+b1:[{s:'h',w:R,t:'ありがとう。……誰かの役に立てたら、自分も少しは変われるかなって思ったんだ。'},{w:R,t:'こんな話を最後まで聞いてくれたのは、{n}が初めてだよ。'},{go:'s4'}],
+b2:[{s:'n',w:R,t:'ああ、そうだった!じゃあ、帰りに自販機でジュースをおごらせて。'},{go:'s4'}],
+b3:[{s:'z',w:R,t:'……そっか。ごめん、急に話しすぎたね。でも、帰りは一緒にどうかな。'},{go:'s4'}],
+
+s4:[
+ {bg:'Rouka',s:'n',lab:'④ 帰りの廊下',t:'二人で並んで廊下を歩く。窓の外では、部活動の声がにぎやかに響いている。'},
+ {w:R,t:'ねえ、{n}。今日はちょっと遠回りして帰らない?見せたい景色があるんだ。'},
+ {t:'(遠回りのお誘い……)',c:[{t:'うん、行きたい!',l:2,go:'c1'},{t:'うーん、今日は急いでるかも……',l:0,go:'c2'}]}],
+c1:[{s:'h',w:R,t:'本当に?やった!絶対、{n}にも気に入ってもらえるよ。'},{go:'s5'}],
+c2:[{s:'z',w:R,t:'そっか……。でも、少しだけなら大丈夫? 五分で済むから!'},{w:M,t:'……五分だけだよ?'},{go:'s5'}],
+
+s5:[
+ {bg:'Kaeri',s:'n',lab:'⑤ 下校',t:'昇降口で靴を履き替え、校門を抜ける。空はゆっくりと、オレンジ色に染まりはじめていた。'},
+ {w:R,t:'{n}は、放課後って好き? ぼくは前まで、ちょっと苦手だったんだ。'},
+ {w:R,t:'でも最近は……好きになってきたかも。誰かと歩く帰り道って、こんなに違うんだね。'},
+ {go:'s6'}],
+
+s6:[
+ {bg:'Kaerimiti',s:'n',lab:'⑥ 夕焼けの帰り道',t:'人通りのない帰り道。リョウスケとの歩幅が、少しずつそろってくる。'},
+ {w:R,t:'……ねえ、{n}。歩く速さ、合わせてみない?'},
+ {mg:'step',ml:[0,1,2,3],go:'s6r'}],
+s6r3:[{s:'h',w:R,t:'完璧だね!まるで、最初から一緒に歩いてたみたいだ。'},{go:'s7'}],
+s6r2:[{s:'n',w:R,t:'いい感じだね。{n}と歩くの、すごく楽しいよ。'},{go:'s7'}],
+s6r1:[{s:'n',w:R,t:'ちょっとずれちゃったけど……それもなんだか、いいよね。'},{go:'s7'}],
+s6r0:[{s:'z',w:R,t:'あはは、ぜんぜん合わなかったね。……ぼくが緊張してるせいかな。'},{go:'s7'}],
+
+s7:[
+ {s:'n',w:R,t:'……{n}。聞いてほしいことが、あるんだ。'},
+ {t:'(夕焼けの中、リョウスケが真剣な顔でこちらを見ている)',c:[{t:'うん、聞かせて',l:3,go:'fin'},{t:'ちょっと待って、心の準備が……',l:1,go:'f2'},{t:'ごめん、今は聞けない',l:-2,go:'f3'}]}],
+f2:[{s:'n',w:R,t:'うん、待つよ。……ずっと待てる。ゆっくり深呼吸して。'},{go:'fin'}],
+f3:[{s:'z',w:R,t:'……そっか。わかった。ごめん、急に困らせて。'},{go:'fin'}],
+fin:[{br:[[12,'endA'],[7,'endB'],[0,'endC']]}],
+
+endA:[
+ {s:'h',w:R,t:'{m}。ぼくは、きみのことが好きだ。名前を呼ぶだけで、胸がいっぱいになるんだ。'},
+ {s:'n',w:M,t:'私も……リョウスケのこと、ずっと気になってた。'},
+ {w:R,t:'……本当に? じゃあ、これからも一緒に帰ろう。毎日、ずっと。'},
+ {end:'A'}],
+endB:[
+ {s:'n',w:R,t:'……ううん、やっぱり今日はやめておく。まだ、胸を張って言えるほど、{n}のことを知らないから。'},
+ {w:R,t:'でも、もっと仲良くなりたい。明日も、一緒に帰ってくれる?'},
+ {w:M,t:'もちろん。また明日ね、リョウスケ。'},
+ {end:'B'}],
+endC:[
+ {s:'z',w:R,t:'……ううん、やっぱりなんでもない。気にしないで。'},
+ {s:'n',w:R,t:'また明日、教室で。……じゃあね、{n}。'},
+ {end:'C'}]
+};
+
+title();
+</script>
+</body>
+</html>
