@@ -72,8 +72,8 @@ html,body{height:100%;background:#2b1b2a;overflow:hidden;touch-action:manipulati
 </div>
 <script>
 // ===== 設定: 画像ファイルの置き場所と拡張子(必要に応じて変更) =====
-const CFG={dir:'',ext:'.png',bgExt:'.png'};
-const SP={n:'Normal',z:'Ziman',h:'UdekumiHirameki'};   // 立ち絵: 通常 / ジト目 / 腕組み・ひらめき
+const CFG={dir:'assets/',ext:'.png',bgExt:'.jpeg'};
+const SP={n:'Normal',z:'Ziman',h:'Hirameki',u:'Udekumi'};   // 立ち絵: 通常 / ジト目 / ひらめき / 腕組み
 const BG={Gakkou:['#9cc8ee','#f7e8b8'],Rouka:['#ecd0a8','#9b7b5b'],Kaeri:['#f6ad82','#7a5090'],Kaerimiti:['#f08a6a','#3a2a5a']};
 const MAXLOVE=15;
 
@@ -220,7 +220,7 @@ function ending(k){
   ov.style.display='block';$('rt').onclick=title;
 }
 
-// ===== シナリオ(w: r=リョウスケ / m=プレイヤー / なし=地の文、s: n=通常 z=ジト目 h=ひらめき x=非表示、l=好感度) =====
+// ===== シナリオ(w: r=リョウスケ / m=プレイヤー / なし=地の文、s: n=通常 z=ジト目 h=ひらめき u=腕組み x=非表示、l=好感度) =====
 const R='r',M='m';
 const SC={
 start:[
@@ -259,8 +259,8 @@ c2:[{s:'z',w:R,t:'そっか……。でも、少しだけなら大丈夫? 五分
 
 s5:[
  {bg:'Kaeri',s:'n',lab:'⑤ 下校',t:'昇降口で靴を履き替え、校門を抜ける。空はゆっくりと、オレンジ色に染まりはじめていた。'},
- {w:R,t:'{n}は、放課後って好き? ぼくは前まで、ちょっと苦手だったんだ。'},
- {w:R,t:'でも最近は……好きになってきたかも。誰かと歩く帰り道って、こんなに違うんだね。'},
+ {s:'u',w:R,t:'{n}は、放課後って好き? ぼくは前まで、ちょっと苦手だったんだ。'},
+ {s:'n',w:R,t:'でも最近は……好きになってきたかも。誰かと歩く帰り道って、こんなに違うんだね。'},
  {go:'s6'}],
 
 s6:[
@@ -285,7 +285,7 @@ endA:[
  {w:R,t:'……本当に? じゃあ、これからも一緒に帰ろう。毎日、ずっと。'},
  {end:'A'}],
 endB:[
- {s:'n',w:R,t:'……ううん、やっぱり今日はやめておく。まだ、胸を張って言えるほど、{n}のことを知らないから。'},
+ {s:'u',w:R,t:'……ううん、やっぱり今日はやめておく。まだ、胸を張って言えるほど、{n}のことを知らないから。'},
  {w:R,t:'でも、もっと仲良くなりたい。明日も、一緒に帰ってくれる?'},
  {w:M,t:'もちろん。また明日ね、リョウスケ。'},
  {end:'B'}],
